@@ -137,6 +137,7 @@ public:
     ~Thread() {
 	_ready.remove(this);
 	_suspended.remove(this);
+	_waiting.remove(this);
 	free(_stack);
     }
 
@@ -196,6 +197,7 @@ private:
     static Thread * volatile _running;
     static Queue _ready;
     static Queue _suspended;
+	static Queue _waiting;
 };
 
 __END_SYS

@@ -13,6 +13,7 @@ __BEGIN_SYS
 // Class attributes
 Thread * volatile Thread::_running;
 Thread::Queue Thread::_ready;
+Thread::Queue Thread::_waiting;
 Thread::Queue Thread::_suspended;
 
 // Methods
@@ -20,8 +21,18 @@ int Thread::join() {
     db<Thread>(TRC) << "Thread::join(this=" << this
 		    << ",state=" << _state << ")\n";
 
-    while(_state != FINISHING)
-	yield();
+    if(Traits::active_scheduler)
+	CPU::int_disable();
+
+    if(_state != FINISHING)
+	{
+		Thread * requester = _running;
+		_waiting.insert(&requester->_link);
+		requester->suspend();
+	}
+
+    if(Traits::active_scheduler)
+	CPU::int_enable();
 
     return *((int *)_stack);
 }
@@ -118,7 +129,7 @@ void Thread::yield() {
 	CPU::switch_context(&old->_context, _running->_context);
     }
 
-    if(Traits::active_scheduler)
+
 	CPU::int_enable();
 }
 
@@ -134,6 +145,12 @@ void Thread::exit(int status)
 
     if(Traits::active_scheduler)
 	CPU::int_disable();
+
+	while(!_waiting.empty()) {
+		Thread * thread = _waiting.remove()->object();
+		_suspended.remove(thread);
+		_ready.insert(&thread->_link);
+	}
 
     if(!_ready.empty()) {
 	Thread * old = _running;
