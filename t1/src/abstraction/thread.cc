@@ -27,7 +27,7 @@ int Thread::join() {
     if(_state != FINISHING)
 	{
 		Thread * requester = _running;
-		_waiting.insert(&requester->_link);
+		_waiting.insert(&requester->_link_2);
 		requester->suspend();
 	}
 

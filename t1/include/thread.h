@@ -63,7 +63,8 @@ public:
 		   Context(entry)),
 	  _state(state),
 	  _priority(priority),
-	  _link(this)
+	  _link(this),
+	  _link_2(this)
     {
 	header(entry, stack_size);
 	Log_Addr sp = _stack + stack_size;
@@ -82,7 +83,8 @@ public:
 		   Context(entry)),
 	  _state(state),
 	  _priority(priority),
-	  _link(this)
+	  _link(this),
+	  _link_2(this)
     {
 	header(entry, stack_size);
 	Log_Addr sp = _stack + stack_size;
@@ -102,7 +104,8 @@ public:
 		   Context(entry)),
 	  _state(state),
 	  _priority(priority),
-	  _link(this)
+	  _link(this),
+	  _link_2(this)
     {
 	header(entry, stack_size);
 	Log_Addr sp = _stack + stack_size;
@@ -123,7 +126,8 @@ public:
 		   Context(entry)),
 	  _state(state),
 	  _priority(priority),
-	  _link(this)
+	  _link(this),
+	  _link_2(this)
     {
 	header(entry, stack_size);
 	Log_Addr sp = _stack + stack_size;
@@ -193,6 +197,7 @@ private:
     volatile State _state;
     volatile Priority _priority;
     Queue::Element _link;
+    Queue::Element _link_2;
 
     static Thread * volatile _running;
     static Queue _ready;
