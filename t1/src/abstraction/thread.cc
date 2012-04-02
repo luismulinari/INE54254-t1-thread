@@ -149,6 +149,7 @@ void Thread::exit(int status)
 	while(!_waiting.empty()) {
 		Thread * thread = _waiting.remove()->object();
 		_suspended.remove(thread);
+	    thread->_state = READY;
 		_ready.insert(&thread->_link);
 	}
 
